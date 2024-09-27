@@ -417,4 +417,11 @@ function getTotalNotifications() {
   return $totalNotifications;
 }
 
+function getProduitsZeroStock() {
+  $conn = connect();
+  $requeteProduits = "SELECT COUNT(*) as total FROM stocks WHERE quantite = 0";
+  $resultatProduits = $conn->query($requeteProduits);
+  $produitsZeroQuantite = $resultatProduits->fetch();
+  return $produitsZeroQuantite['total'];
+}
 ?>
