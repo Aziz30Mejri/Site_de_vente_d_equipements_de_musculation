@@ -1,7 +1,6 @@
 <?php
 session_start();
 include "include/functions.php";
-
 // Vérifier si un identifiant de catégorie est passé en paramètre
 if (isset($_GET['categorie_id']) && filter_var($_GET['categorie_id'], FILTER_VALIDATE_INT)) {
     $categorieId = intval($_GET['categorie_id']);
@@ -224,6 +223,11 @@ if (isset($_GET['categorie_id']) && filter_var($_GET['categorie_id'], FILTER_VAL
             -webkit-line-clamp: 3; /* Limite à 3 lignes */
             overflow: hidden; /* Masque le texte qui dépasse */
             text-overflow: ellipsis; /* Ajoute "..." si le texte est trop long */
+        }
+        .modal-dialog {
+          margin-top: 0;
+          top: 0; /* Positionne la modal en haut de la page */
+          transform: translateY(0); /* Annule l'alignement vertical centré */
         }
   </style>
 </head>
