@@ -9,6 +9,8 @@ $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $totalProduits = count(getStocks());
 $totalPages = ceil($totalProduits / $stocksParPage);
 $stocks = getStocksParPage($page, $stocksParPage);
+$produitsZeroStock = getProduitsZeroStock();
+
 ?>
 <!doctype html>
 <html lang="fr">
@@ -153,6 +155,14 @@ $stocks = getStocksParPage($page, $stocksParPage);
                             Stock modifiée avec succès
                           </div>';
                 } ?>
+                <!-- Afficher l'alerte uniquement si le stock est épuisé pour certains produits -->
+                <?php if ($produitsZeroStock > 0): ?>
+                    <div class="alert alert-danger">
+                        <span class="close-btn">&times;</span>
+                        Attention ! Il y a <?= $produitsZeroStock ?> produit(s) en rupture de stock.
+                    </div>
+                <?php endif; ?>
+
                 <form class="form" action="index.php" method="POST">
                     <button>
                         <svg width="20" height="20" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="search">
