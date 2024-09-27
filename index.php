@@ -2,6 +2,7 @@
   session_start();
   include "include/functions.php";
   $categories = getAllCategories();
+  $data = getData();
 
   if (isset($_GET['id'])) {
     $produit = getProduitById($_GET['id']);
@@ -13,7 +14,6 @@
     $produits = getAllProduits();
   }
 ?>
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -220,14 +220,50 @@
             overflow: hidden; /* Masque le texte qui dépasse */
             text-overflow: ellipsis; /* Ajoute "..." si le texte est trop long */
         }
+        .modal-dialog {
+          margin-top: 0;
+          top: 0;
+          transform: translateY(0);
+        }
+        .custom-select {
+          background-color: #2488E6;
+          color: white;
+          border-radius: 10px;
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Ombre */
+        }
+        .custom-select:focus {
+            outline: none; /* Supprimer l'effet de contour par défaut */
+            box-shadow: 0 0 0 2px rgba(0, 136, 255, 0.5); /* Ombre au focus */
+        }
+        .custom-select option {
+          background-color: white; /* Fond blanc pour les options */
+          color: black; /* Couleur du texte des options */
+        }
+        .custom-select option {
+          background-color: white; /* Fond blanc pour les options */
+          color: black; /* Couleur du texte des options */
+        }
   </style>
 </head>
 <body>
   <?php include "include/header.php";?>
   <div class="container mt-4">
     <div class="row">
+      <div class="millieu" style="margin: 0 auto; text-align: center;">
+      Il y a <?php echo $data['produits']; ?> produits.
+      </div>
+      <div class="col-12 text-end">
+        <label for="sortPrix" class="form-label">Trier par:</label>
+        <select id="sortPrix" class="custom-select">
+          <option value="random">Aléatoire</option>
+          <option value="name_asc">Nom, A à Z</option>
+          <option value="name_desc">Nom, Z à A</option>
+          <option value="asc">Prix croissant</option>
+          <option value="desc">Prix décroissant</option>
+        </select>
+      </div>
       <?php foreach($produits as $produit): ?>
-        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mt-3 mb-3">
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mt-3 mb-3" data-date-creation="2024-09-01">
           <div class="card h-100">
             <img src="images/<?php echo $produit['image']; ?>" class="card-img-top img-fluid" alt="<?php echo $produit['nom']; ?>" data-bs-toggle="modal" data-bs-target="#imageModal<?php echo $produit['id']; ?>">
             <div class="card-body">
@@ -361,5 +397,31 @@
             });
         }
     });
+</script>
+<script>
+document.getElementById('sortPrix').addEventListener('change', function() {
+    const sortOption = this.value;
+    const produits = Array.from(document.querySelectorAll('.col-12.col-sm-6.col-md-4.col-lg-3'));
+
+    if (sortOption === 'asc' || sortOption === 'desc') {
+        produits.sort((a, b) => {
+            const prixA = parseFloat(a.querySelector('.card-text').textContent.replace('DT', '').trim());
+            const prixB = parseFloat(b.querySelector('.card-text').textContent.replace('DT', '').trim());
+            return sortOption === 'asc' ? prixA - prixB : prixB - prixA;
+        });
+    } else if (sortOption === 'name_asc' || sortOption === 'name_desc') {
+        produits.sort((a, b) => {
+            const nomA = a.querySelector('.card-title').textContent.toLowerCase();
+            const nomB = b.querySelector('.card-title').textContent.toLowerCase();
+            if (nomA < nomB) return sortOption === 'name_asc' ? -1 : 1;
+            if (nomA > nomB) return sortOption === 'name_asc' ? 1 : -1;
+            return 0;
+        });
+    } else if (sortOption === 'random') {
+        produits.sort(() => Math.random() - 0.5);
+    }
+    const container = document.querySelector('.row');
+    produits.forEach(produit => container.appendChild(produit));
+});
 </script>
 </html>
